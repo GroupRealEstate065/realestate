@@ -13,6 +13,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import com.hothome.configuration.customer.DatabaseLoginSuccessHandler;
+import com.hothome.configuration.oAuth.CustomerOAuth2UserService;
+import com.hothome.configuration.oAuth.OAuth2LoginSuccessHandler;
 import com.hothome.filter.JwtAccessDeniedHandler;
 import com.hothome.filter.JwtAuthenticationEntryPoint;
 import com.hothome.filter.JwtAuthorizationFilter;
@@ -31,6 +34,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	
 	private UserDetailsService userDetailsService;
 	private BCryptPasswordEncoder bCryptPasswordEncoder;
+	
+	@Autowired private CustomerOAuth2UserService oAuth2UserService;
+	@Autowired private OAuth2LoginSuccessHandler oauth2LoginHandler;
+	@Autowired private DatabaseLoginSuccessHandler databaseLoginHandler;
+	
 	
 	@Autowired
 	public SecurityConfiguration(JwtAuthorizationFilter jwtAuthorizationFilter,
@@ -56,6 +64,12 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 		.and()
 		.authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
 		.anyRequest().authenticated()
+		.and()
+		.oauth2Login()
+			.userInfoEndpoint()
+			.userService(oAuth2UserService)
+			.and()
+			.successHandler(oauth2LoginHandler)
 		.and()
 		.exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
 		.authenticationEntryPoint(jwtAuthenticationEntryPoint)

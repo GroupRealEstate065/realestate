@@ -17,11 +17,11 @@ import static com.hothome.constant.SecurityConstant.*;
 
 import com.hothome.configuration.UserDetailsServiceImpl;
 import com.hothome.jwt.JwtTokenProvider;
-import com.hothome.model.AdminEntity;
+import com.hothome.model.UserEntity;
 import com.hothome.model.UserLogged;
 import com.hothome.model.UserPrincipal;
-import com.hothome.repository.AdminRepository;
-import com.hothome.service.AdminService;
+
+import com.hothome.service.UserService;
 
 @RestController
 public class HomeController {
@@ -33,7 +33,7 @@ public class HomeController {
     private JwtTokenProvider jwtTokenProvider;
 	
     @Autowired
-    private AdminService adminService;
+    private UserService adminService;
     
     
     @Autowired
@@ -51,18 +51,16 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/register/admin",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public ResponseEntity<AdminEntity> registerAdmin(@RequestBody AdminEntity admin){
+	public ResponseEntity<UserEntity> registerAdmin(@RequestBody UserEntity admin){
 		
 		String password = admin.getPassword();
-		AdminEntity user = adminService.save(admin);
+		UserEntity user = adminService.save(admin);
 		
 		  authenticate(admin.getEmail(),password); UserPrincipal userPrincipal =
 		  (UserPrincipal) userService.loadUserByUsername(admin.getEmail()); HttpHeaders
 		  jwtHeader = getJwtHeader(userPrincipal);
-		 
 		
-		
-		return new ResponseEntity<AdminEntity>(admin,jwtHeader, HttpStatus.CREATED);
+		return new ResponseEntity<UserEntity>(admin,jwtHeader, HttpStatus.CREATED);
 	}
 
 	@RequestMapping(value = "/login",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
@@ -73,7 +71,6 @@ public class HomeController {
 		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
 		return new ResponseEntity<UserPrincipal>(userPrincipal,jwtHeader, HttpStatus.CREATED);
 	}
-	
 	
 	private HttpHeaders getJwtHeader(UserPrincipal user) {
         HttpHeaders headers = new HttpHeaders();

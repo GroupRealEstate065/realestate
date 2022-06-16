@@ -29,15 +29,17 @@ public class JwtAuthorizationFilter extends OncePerRequestFilter{
 		this.jwtTokenProvider = jwtTokenProvider;
 	}
 	
-	
-	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
+		
+		String temp = request.getRequestURL().toString();
+		
 		if(request.getMethod().equalsIgnoreCase(request.getHeader(OPTIONS_HTTP_METHOD))) {
 			response.setStatus(HttpStatus.OK.value());
 		}
 		else {
+			
 			String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 			if (authorizationHeader == null || !authorizationHeader.startsWith(TOKEN_PREFIX)) {
                 filterChain.doFilter(request, response);

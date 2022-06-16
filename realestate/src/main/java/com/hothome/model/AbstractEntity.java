@@ -50,24 +50,5 @@ public abstract class AbstractEntity implements Serializable{
 	@DateTimeFormat
 	@UpdateTimestamp
 	protected LocalDateTime modifiedAt;
-	
-	@Column(nullable = true, name = "authorities")
-	protected String[] authorities;
-	
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private Roles role;
-
-	@Column(nullable = true)
-	protected boolean isActive;
-	
-	@Column(nullable = true)
-	protected boolean isNotLocked;
-	
-	@Column(unique = true, nullable = false)
-	private String email;
-	
-	@Column(nullable = false)
-	private String password;
-	
+		
 }
