@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.DefaultRedirectStrategy;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
@@ -63,13 +64,9 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 			userService.updateAuthenticationType(customer.getId(), cleintName);
 		}
 		
-		UserLogged temp = new UserLogged(customer.getId(), customer.getEmail(), customer.getName(), customer.getPassword(), customer.getRole().toString(), customer.getAuthorities(), customer.isActive(), customer.isNotLocked());
-		UserPrincipal user = new UserPrincipal(temp);
-		
-		response.addHeader(JWT_TOKEN_HEADER, jwtTokenProvider.generateJWTToken(user));
-		
-		String temap = request.getRequestURL().toString();
-		redirectStrategy.sendRedirect(request, response, "/login?username="+email +"&password=");
+		Object princioa= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		super.onAuthenticationSuccess(request, response, authentication);
+		//redirectStrategy.sendRedirect(request, response, "/auth");
 		
 	}
 	

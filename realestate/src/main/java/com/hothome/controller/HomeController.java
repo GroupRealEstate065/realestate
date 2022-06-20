@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.hothome.constant.SecurityConstant.*;
 
 import com.hothome.configuration.UserDetailsServiceImpl;
+import com.hothome.constant.AuthenticationType;
+import com.hothome.dto.LoginDto;
 import com.hothome.jwt.JwtTokenProvider;
 import com.hothome.model.UserEntity;
 import com.hothome.model.UserLogged;
@@ -50,24 +53,36 @@ public class HomeController {
 		return "UP";
 	}
 	
-	@RequestMapping(value = "/register/admin",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	@RequestMapping(value = "/register",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<UserEntity> registerAdmin(@RequestBody UserEntity admin){
 		
 		String password = admin.getPassword();
+		admin.setAuthenticationType(AuthenticationType.Database.toString());
 		UserEntity user = adminService.save(admin);
 		
-		  authenticate(admin.getEmail(),password); UserPrincipal userPrincipal =
+		  authenticate(admin.getEmail(),password); 
+		  UserPrincipal userPrincipal =
 		  (UserPrincipal) userService.loadUserByUsername(admin.getEmail()); HttpHeaders
 		  jwtHeader = getJwtHeader(userPrincipal);
 		
 		return new ResponseEntity<UserEntity>(admin,jwtHeader, HttpStatus.CREATED);
 	}
+	
+	@GetMapping(value = "/")
+	public ResponseEntity<UserEntity> authUser(){
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
+		UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
+		UserEntity user = new UserEntity();
+		return new ResponseEntity<UserEntity>(user,jwtHeader, HttpStatus.CREATED);
+	}
+	
 	@RequestMapping(value = "/login",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public ResponseEntity<UserPrincipal> login(@RequestParam String username, @RequestParam String password){
+	public ResponseEntity<UserPrincipal> login(@RequestBody LoginDto loginDto){
 		
-		authenticate(username,password);
-		UserPrincipal userPrincipal = (UserPrincipal) userService.loadUserByUsername(username);
+		authenticate(loginDto.getEmail(),loginDto.getPassword());
+		UserPrincipal userPrincipal = (UserPrincipal) userService.loadUserByUsername(loginDto.getEmail());
 		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
 		return new ResponseEntity<UserPrincipal>(userPrincipal,jwtHeader, HttpStatus.CREATED);
 	}
