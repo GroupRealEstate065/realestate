@@ -23,7 +23,7 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 		//if user is admin
 		UserEntity admin = userRepository.getUserEntityByEmail(username);
 		if(admin != null) {
-			UserLogged temp = new UserLogged(admin.getId(), admin.getEmail(), admin.getName(), admin.getPassword(), admin.getRole().toString(), admin.getAuthorities(), admin.isActive(), admin.isNotLocked());
+			UserLogged temp = new UserLogged(admin.getId(), admin.getEmail(), admin.getFirstName() + admin.getLastName(), admin.getPassword(), admin.getRole().toString(), admin.getAuthorities(), admin.isActive(), admin.isNotLocked());
 			UserPrincipal user = new UserPrincipal(temp);
 			return user;
 		}

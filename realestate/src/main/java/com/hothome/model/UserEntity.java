@@ -9,6 +9,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import org.checkerframework.checker.units.qual.min;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.hothome.constant.Roles;
 import com.sun.istack.NotNull;
@@ -70,7 +72,33 @@ public class UserEntity extends AbstractEntity{
 	private String authenticationType;
 	
 	@Column(nullable = true)
+	@Size(min = 8, max = 15)
+	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
 	public String profileImage;
+	
+	@Size(min = 6, max = 15)
+	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	private String phoneNumber;
+	
+	@Size(min = 4, max = 15)
+	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	private String street;
+	
+	@Size(min = 2, max = 15)
+	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	private String city;
+	
+	@Size(min = 8, max = 15)
+	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	private String postalCode;
+	
+	@Size(min = 2, max = 15)
+	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	private String licenseNumber;
+	
+	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	private String licenseDoc;
+	
 	
 	@Transient
 	public String getProfileImageUrl() {

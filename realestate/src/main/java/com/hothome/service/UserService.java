@@ -51,7 +51,7 @@ public class UserService{
 			AuthenticationType authenticationType) {
 		UserEntity customer = new UserEntity();
 		customer.setEmail(email);
-		customer.setName(name);		
+		customer.setFirstName(name);		
 		customer.setActive(true);
 		customer.setRole(Roles.ROLE_CUSTOMER);
 		customer.setAuthorities(USER_AUTHORITIES);
