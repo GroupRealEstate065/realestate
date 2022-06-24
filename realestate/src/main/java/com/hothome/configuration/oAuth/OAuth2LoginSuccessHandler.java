@@ -55,6 +55,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 		AuthenticationType authenticationType = getAuthenticationType(cleintName);
 		
 		UserEntity customer = userService.getUserByEmail(email);
+		
 		if(customer == null) 
 		{
 			customer = userService.addNewCustomerUponOAuthLogin(name, email, countryCode, authenticationType);
@@ -64,7 +65,7 @@ public class OAuth2LoginSuccessHandler extends SavedRequestAwareAuthenticationSu
 			userService.updateAuthenticationType(customer.getId(), cleintName);
 		}
 		
-		Object princioa= SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 		super.onAuthenticationSuccess(request, response, authentication);
 		//redirectStrategy.sendRedirect(request, response, "/auth");
 		

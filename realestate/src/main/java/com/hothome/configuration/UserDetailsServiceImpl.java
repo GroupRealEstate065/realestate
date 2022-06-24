@@ -20,8 +20,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		
-
 		//if user is admin
 		UserEntity admin = userRepository.getUserEntityByEmail(username);
 		if(admin != null) {

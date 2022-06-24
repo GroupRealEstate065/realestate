@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import static com.hothome.constant.SecurityConstant.*;
 
+import javax.validation.Valid;
+
 import com.hothome.configuration.UserDetailsServiceImpl;
 import com.hothome.constant.AuthenticationType;
 import com.hothome.dto.LoginDto;
@@ -54,7 +56,7 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/register",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public ResponseEntity<UserEntity> registerAdmin(@RequestBody UserEntity admin){
+	public ResponseEntity<UserEntity> registerAdmin(@RequestBody @Valid UserEntity admin){
 		
 		String password = admin.getPassword();
 		admin.setAuthenticationType(AuthenticationType.Database.toString());
@@ -68,15 +70,7 @@ public class HomeController {
 		return new ResponseEntity<UserEntity>(admin,jwtHeader, HttpStatus.CREATED);
 	}
 	
-	@GetMapping(value = "/")
-	public ResponseEntity<UserEntity> authUser(){
-		Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-
-		UserPrincipal userPrincipal = (UserPrincipal) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
-		UserEntity user = new UserEntity();
-		return new ResponseEntity<UserEntity>(user,jwtHeader, HttpStatus.CREATED);
-	}
+	
 	
 	@RequestMapping(value = "/login",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<UserPrincipal> login(@RequestBody LoginDto loginDto){
