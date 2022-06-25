@@ -22,6 +22,8 @@ import lombok.Setter;
 
 import static com.hothome.Utility.AwsS3Constant.*;
 
+import java.util.Arrays;
+
 @Entity
 @AllArgsConstructor
 @NoArgsConstructor
@@ -31,13 +33,13 @@ public class UserEntity extends AbstractEntity{
 	
 	@Column(nullable = false)
 	@NotBlank(message = "First Name cannot be Empty")
-	@Size(min = 2, max = 5, message = "First Name must have length of 2-5 characters ")
-	@Pattern(regexp = "[A-Za-']*",message = "First Name contains illegal characters")
+	@Size(min = 2, max = 35, message = "First Name must have length of 2-5 characters ")
+	@Pattern(regexp = "[A-Za-z']*",message = "First Name contains illegal characters")
 	private String firstName;
 
 	@NotBlank(message = "Last Name cannot be Empty")
-	@Size(min = 2, max = 5, message = "Last Name must have length of 2-5 characters ")
-	@Pattern(regexp = "[A-Za-']*",message = "Last Name contains illegal characters")
+	@Size(min = 2, max = 25, message = "Last Name must have length of 2-5 characters ")
+	@Pattern(regexp = "[A-Za-z']*",message = "Last Name contains illegal characters")
 	@Column(nullable = false)
 	private String lastName;
 	
@@ -63,8 +65,8 @@ public class UserEntity extends AbstractEntity{
 	
 	@Column(nullable = false)
 	@NotBlank(message = "Password Cannot be Empty")
-	@Size(min = 2, max = 6, message = "Passowrd must be 2-6 length long")
-	//@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$", message = "Invalid Password")
+	@Size(min = 2, max = 30, message = "Passowrd must be 2-6 length long")
+	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$", message = "Invalid Password")
 	@JsonIgnore
 	private String password;
 
@@ -72,32 +74,33 @@ public class UserEntity extends AbstractEntity{
 	private String authenticationType;
 	
 	@Column(nullable = true)
-	@Size(min = 8, max = 15)
-	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	@Size(min = 2, max = 50)
+	//@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
 	public String profileImage;
 	
 	@Size(min = 6, max = 15)
 	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
 	private String phoneNumber;
 	
-	@Size(min = 4, max = 15)
-	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	@Size(min = 4, max = 25)
+	@Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Please Enter Alphanumeric Characters")
 	private String street;
 	
-	@Size(min = 2, max = 15)
-	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	@Size(min = 2, max = 25)
+	@Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Please Enter Alphanumeric Characters")
 	private String city;
 	
-	@Size(min = 8, max = 15)
-	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	@Size(min = 2, max = 25)
+	@Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Please Enter Alphanumeric Characters")
 	private String postalCode;
 	
-	@Size(min = 2, max = 15)
-	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	@Size(min = 2, max = 25)
+	@Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Please Enter Alphanumeric Characters")
 	private String licenseNumber;
 	
-	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
+	//@Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Please Enter Alphanumeric Characters")
 	private String licenseDoc;
+	
 	
 	
 	@Transient
@@ -109,6 +112,20 @@ public class UserEntity extends AbstractEntity{
 			return S3_BASE_URI + "/user-photos/" + this.id + "/" + this.profileImage;
 		}
 	}
+
+
+
+	@Override
+	public String toString() {
+		return "UserEntity [firstName=" + firstName + ", lastName=" + lastName + ", authorities="
+				+ Arrays.toString(authorities) + ", role=" + role + ", isActive=" + isActive + ", isNotLocked="
+				+ isNotLocked + ", email=" + email + ", password=" + password + ", authenticationType="
+				+ authenticationType + ", profileImage=" + profileImage + ", phoneNumber=" + phoneNumber + ", street="
+				+ street + ", city=" + city + ", postalCode=" + postalCode + ", licenseNumber=" + licenseNumber
+				+ ", licenseDoc=" + licenseDoc + ", id=" + id + ", createdAt=" + createdAt + ", modifiedAt="
+				+ modifiedAt + "]";
+	}
+	
 	
 	
 }

@@ -14,6 +14,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import static com.hothome.constant.AuthenticationType.Database;
+import static com.hothome.constant.Authority.ADMIN_AUTHORITIES;
+import static com.hothome.constant.Roles.ROLE_ADMIN;
 import static com.hothome.constant.SecurityConstant.*;
 
 import javax.validation.Valid;
@@ -56,11 +60,30 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/register",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public ResponseEntity<UserEntity> registerAdmin(@RequestBody @Valid UserEntity admin){
+	public ResponseEntity<UserEntity> registerAdmin(@RequestBody  UserEntity admin){
+		
+UserEntity entity = new UserEntity();
+		
+		entity.setFirstName("Karanpartap");
+		entity.setLastName("Singh");
+		entity.setAuthorities(ADMIN_AUTHORITIES);
+		entity.setRole(ROLE_ADMIN);
+		entity.setActive(true);
+		entity.setNotLocked(true);
+		entity.setEmail("karanpartapsingh20@gmail.com");
+		entity.setPassword("123654789999");
+		entity.setPhoneNumber("+14168457419");
+		entity.setAuthenticationType(Database.toString());
+		entity.setRole(ROLE_ADMIN);
+		entity.setStreet("Oaklea Blvd");
+		entity.setPostalCode("L6Y5A2");
+		entity.setCity("Brampton");
+		entity.setLicenseDoc("12336APII");
+		entity.setLicenseNumber("");
 		
 		String password = admin.getPassword();
 		admin.setAuthenticationType(AuthenticationType.Database.toString());
-		UserEntity user = adminService.save(admin);
+		UserEntity user = adminService.save(entity);
 		
 		  authenticate(admin.getEmail(),password); 
 		  UserPrincipal userPrincipal =

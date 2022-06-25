@@ -14,6 +14,8 @@ import com.hothome.repository.UserRepository;
 
 import static com.hothome.constant.Authority.*;
 
+import java.util.ArrayList;
+
 @Service
 @Transactional
 public class UserService{
@@ -28,17 +30,19 @@ public class UserService{
 		return userRepository.getUserEntityByEmail(email);
 	}
 	
+	public ArrayList<UserEntity> listAll(){
+		ArrayList<UserEntity> temp = (ArrayList<UserEntity>) userRepository.findAll();
+		return temp;
+	}
+	
 	public UserEntity save(UserEntity user) {
 		boolean isUpdatingUser = (user.getId() != null);
 		if(false) {
+			UserEntity temp = userRepository.findById(user.getId()).get();
 			
 		}
 		else {
 			user.setPassword(encoder.encodePassword(user.getPassword()));
-			user.setActive(true);
-			user.setNotLocked(true);
-			user.setAuthorities(ADMIN_AUTHORITIES);
-			user.setRole(Roles.ROLE_ADMIN);
 		}
 		return userRepository.save(user);	
 	}
@@ -59,5 +63,17 @@ public class UserService{
 		customer.setPassword("");
 		return userRepository.save(customer);
 	}	
+	
+	public String checkEmailUnique(String email) {
+		UserEntity user = userRepository.getUserEntityByEmail(email);
+		
+		if(user == null) {
+			return "OK";
+		}
+		else {
+			return "Duplicated";
+		}
+		
+	}
 	
 }
