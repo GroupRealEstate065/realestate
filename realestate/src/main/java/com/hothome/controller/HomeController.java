@@ -20,6 +20,8 @@ import static com.hothome.constant.Authority.ADMIN_AUTHORITIES;
 import static com.hothome.constant.Roles.ROLE_ADMIN;
 import static com.hothome.constant.SecurityConstant.*;
 
+import java.util.ArrayList;
+
 import javax.validation.Valid;
 
 import com.hothome.configuration.UserDetailsServiceImpl;
@@ -39,6 +41,7 @@ public class HomeController {
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully";
     private AuthenticationManager authenticationManager;
     private UserDetailsServiceImpl userService;
+    private UserService userServiceD;
     private JwtTokenProvider jwtTokenProvider;
 	
     @Autowired
@@ -62,7 +65,7 @@ public class HomeController {
 	@RequestMapping(value = "/register",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
 	public ResponseEntity<UserEntity> registerAdmin(@RequestBody  UserEntity admin){
 		
-UserEntity entity = new UserEntity();
+		UserEntity entity = new UserEntity();
 		
 		entity.setFirstName("Karanpartap");
 		entity.setLastName("Singh");
@@ -103,6 +106,13 @@ UserEntity entity = new UserEntity();
 		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
 		return new ResponseEntity<UserPrincipal>(userPrincipal,jwtHeader, HttpStatus.CREATED);
 	}
+	
+	@RequestMapping(value = "/user/listAll",method = RequestMethod.GET ,produces = "application/json")
+	public ResponseEntity<ArrayList<UserEntity>> listAllUser(){
+		ArrayList<UserEntity> list = this.userServiceD.listAll();
+		return new ResponseEntity<>(list,HttpStatus.ACCEPTED);
+	}
+	
 	
 	private HttpHeaders getJwtHeader(UserPrincipal user) {
         HttpHeaders headers = new HttpHeaders();
