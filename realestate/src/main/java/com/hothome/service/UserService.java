@@ -56,6 +56,16 @@ public class UserService{
 		return userRepository.save(user);	
 	}
 	
+	public boolean deleteById(Long id) {
+		Optional<UserEntity> user = this.userRepository.findById(id);
+		if(user != null) {
+			this.userRepository.delete(user.get());
+			return true;
+		}
+		else {
+			throw new UsernameNotFoundException("User does not Exist");
+		}
+	}
 	public void updateAuthenticationType(Long userId,String authenticationType) {
 		 this.userRepository.updateAuthenticationType(userId,authenticationType);
 	}
@@ -75,7 +85,6 @@ public class UserService{
 	
 	public String checkEmailUnique(String email) {
 		UserEntity user = userRepository.getUserEntityByEmail(email);
-		
 		if(user == null) {
 			return "OK";
 		}

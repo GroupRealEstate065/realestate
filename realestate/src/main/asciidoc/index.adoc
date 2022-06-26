@@ -63,19 +63,49 @@ RESTful Notes uses hypermedia and resources include links to other resources in 
 responses. Responses are in http://stateless.co/hal_specification.html[Hypertext Application
 from resource to resource.
 Language (HAL)] format. Links can be found beneath the `_links` key. Users of the API should
-not create URIs themselves, instead they should use the above-described links to navigate
+not create URIs themselves, instead they should use the above-described links to navigate.
+
 === List all Users
 List all Users registered.
 
 ==== Curl Sample
-include::{snippets}/test-get-all-user/curl-request.adoc[]
+include::{snippets}/user/list-all-user/curl-request.adoc[]
 
 ==== Sample Request
-
-include::{snippets}/test-get-all-user/http-request.adoc[]
+include::{snippets}/user/list-all-user/http-request.adoc[]
 
 ==== Sample Response
-include::{snippets}/test-get-all-user/http-response.adoc[]
+include::{snippets}/user/list-all-user/http-response.adoc[]
 
 ==== Sample Body
-include::{snippets}/test-get-all-user/response-body.adoc[]
+include::{snippets}/user/list-all-user/response-body.adoc[]
+
+=== find User Id
+Find User by Id.
+
+==== Sample Request
+include::{snippets}/user/get-user-by-id/http-request.adoc[]
+
+==== Sample Response
+include::{snippets}/user/get-user-by-id/http-response.adoc[]
+
+==== Sample Body
+include::{snippets}/user/get-user-by-id/response-body.adoc[]
+
+==== Response Fields 
+include::{snippets}/user/get-user-by-id/response-fields.adoc[]
+
+==== Path Parameters 
+include::{snippets}/user/get-user-by-id/path-parameters.adoc[]
+
+=== find User By Email
+Find User by Email.
+
+==== Sample Request
+include::{snippets}/user/check-user-email-unique/http-request.adoc[]
+
+==== Sample Response
+include::{snippets}/user/check-user-email-unique/http-response.adoc[]
+
+==== Sample Body
+include::{snippets}/user/check-user-email-unique/response-body.adoc[]
