@@ -16,6 +16,7 @@ import com.hothome.constant.Roles;
 import com.sun.istack.NotNull;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class UserEntity extends AbstractEntity{
 	
 	@Column(nullable = false)

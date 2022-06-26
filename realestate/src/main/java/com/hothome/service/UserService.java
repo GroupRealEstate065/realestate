@@ -3,6 +3,7 @@ package com.hothome.service;
 import javax.transaction.Transactional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,7 @@ import com.hothome.repository.UserRepository;
 import static com.hothome.constant.Authority.*;
 
 import java.util.ArrayList;
+import java.util.Optional;
 
 @Service
 @Transactional
@@ -33,6 +35,13 @@ public class UserService{
 	public ArrayList<UserEntity> listAll(){
 		ArrayList<UserEntity> temp = (ArrayList<UserEntity>) userRepository.findAll();
 		return temp;
+	}
+	public UserEntity findById(Long id) {
+		Optional<UserEntity>  user = this.userRepository.findById(id);
+		if(user == null) {
+			throw new UsernameNotFoundException("User does not Exist");
+		}
+		return user.get();
 	}
 	
 	public UserEntity save(UserEntity user) {

@@ -107,11 +107,7 @@ public class HomeController {
 		return new ResponseEntity<UserPrincipal>(userPrincipal,jwtHeader, HttpStatus.CREATED);
 	}
 	
-	@RequestMapping(value = "/user/listAll",method = RequestMethod.GET ,produces = "application/json")
-	public ResponseEntity<ArrayList<UserEntity>> listAllUser(){
-		ArrayList<UserEntity> list = this.userServiceD.listAll();
-		return new ResponseEntity<>(list,HttpStatus.ACCEPTED);
-	}
+	
 	
 	
 	private HttpHeaders getJwtHeader(UserPrincipal user) {
