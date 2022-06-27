@@ -14,18 +14,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import static com.hothome.constant.AuthenticationType.Database;
 import static com.hothome.constant.Authority.ADMIN_AUTHORITIES;
 import static com.hothome.constant.Roles.ROLE_ADMIN;
 import static com.hothome.constant.SecurityConstant.*;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.servlet.annotation.MultipartConfig;
 import javax.validation.Valid;
 
+import com.hothome.Utility.AmazonS3Util;
 import com.hothome.configuration.UserDetailsServiceImpl;
 import com.hothome.constant.AuthenticationType;
+import com.hothome.constant.Authority;
+import com.hothome.constant.Roles;
 import com.hothome.dto.LoginDto;
 import com.hothome.jwt.JwtTokenProvider;
 import com.hothome.model.UserEntity;
@@ -48,6 +54,8 @@ public class HomeController {
     private UserService adminService;
     
     
+    
+    
     @Autowired
 	public HomeController(AuthenticationManager authenticationManager, UserDetailsServiceImpl userService,
 			JwtTokenProvider jwtTokenProvider) {
@@ -62,38 +70,87 @@ public class HomeController {
 		return "UP";
 	}
 	
-	@RequestMapping(value = "/register",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public ResponseEntity<UserEntity> registerAdmin(@RequestBody  UserEntity admin){
+	
+	@RequestMapping(value = "/registerr",method = RequestMethod.GET,  produces = "application/json")
+	public ResponseEntity<UserEntity> registerAdminNew(){
 		
-		UserEntity entity = new UserEntity();
+	UserEntity entity = new UserEntity();
 		
-		entity.setFirstName("Karanpartap");
-		entity.setLastName("Singh");
-		entity.setAuthorities(ADMIN_AUTHORITIES);
-		entity.setRole(ROLE_ADMIN);
-		entity.setActive(true);
-		entity.setNotLocked(true);
-		entity.setEmail("karanpartapsingh20@gmail.com");
-		entity.setPassword("123654789999");
-		entity.setPhoneNumber("+14168457419");
-		entity.setAuthenticationType(Database.toString());
-		entity.setRole(ROLE_ADMIN);
-		entity.setStreet("Oaklea Blvd");
-		entity.setPostalCode("L6Y5A2");
-		entity.setCity("Brampton");
-		entity.setLicenseDoc("12336APII");
-		entity.setLicenseNumber("");
+	/*
+	 * entity.setFirstName("Karanpartap"); entity.setLastName("Singh");
+	 * entity.setAuthorities(ADMIN_AUTHORITIES); entity.setRole(ROLE_ADMIN);
+	 * //String pssword = encoder.encode("Aq@123456789");
+	 * entity.setPassword("Aq@123456789"); entity.setActive(true);
+	 * entity.setNotLocked(true); entity.setEmail("karanpartapsingh20@gmail.com");
+	 * entity.setPhoneNumber("14168457419");
+	 * entity.setAuthenticationType(Database.toString());
+	 * entity.setRole(ROLE_ADMIN); entity.setStreet("Oaklea Blvd");
+	 * entity.setPostalCode("L6Y5A2"); entity.setCity("Brampton");
+	 * entity.setLicenseDoc("1233APO1"); entity.setLicenseNumber("1233APO1");
+	 */
 		
-		String password = admin.getPassword();
-		admin.setAuthenticationType(AuthenticationType.Database.toString());
+	entity.setFirstName("John");
+	entity.setLastName("Smith");
+	entity.setAuthorities(Authority.USER_AUTHORITIES);
+	entity.setRole(Roles.ROLE_CUSTOMER);
+	entity.setPassword("Aq@123456789");
+	entity.setActive(true);
+	entity.setNotLocked(true);
+	entity.setEmail("johnsmith@gmail.com");
+	entity.setPhoneNumber("14168457419");
+	entity.setAuthenticationType(Database.toString());
+	entity.setRole(ROLE_ADMIN);
+	entity.setStreet("Lennon Drive");
+	entity.setPostalCode("LUIOO2");
+	entity.setCity("MIssissauga");
+	entity.setLicenseDoc("12336APII");
+	entity.setLicenseNumber("12336APII");
+	
+		String password = entity.getPassword();
+		entity.setAuthenticationType(AuthenticationType.Database.toString());
 		UserEntity user = adminService.save(entity);
 		
-		  authenticate(admin.getEmail(),password); 
+		  authenticate(entity.getEmail(),password); 
 		  UserPrincipal userPrincipal =
-		  (UserPrincipal) userService.loadUserByUsername(admin.getEmail()); HttpHeaders
+		  (UserPrincipal) userService.loadUserByUsername(entity.getEmail()); HttpHeaders
 		  jwtHeader = getJwtHeader(userPrincipal);
 		
-		return new ResponseEntity<UserEntity>(admin,jwtHeader, HttpStatus.CREATED);
+		return new ResponseEntity<UserEntity>(entity,jwtHeader, HttpStatus.CREATED);
+	}
+	
+	@RequestMapping(value = "/register",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
+	public ResponseEntity<UserEntity> registerAdmin(@RequestBody  UserEntity entity, @RequestParam(required = false) MultipartFile userImage, @RequestParam(required = false) MultipartFile builderDoc){
+		
+		if(!userImage.isEmpty()) {
+			String imageName = userImage.getOriginalFilename();
+			entity.setProfileImage(imageName);
+			String uploadDir = "user-photos/" + entity.getId();
+			try {
+				AmazonS3Util.deleteFile(uploadDir);
+				AmazonS3Util.uploadFile(uploadDir, imageName, userImage.getInputStream());
+				
+				
+				
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
+		
+		
+		
+		
+		
+		String password = entity.getPassword();
+		entity.setAuthenticationType(AuthenticationType.Database.toString());
+		UserEntity user = adminService.save(entity);
+	
+		authenticate(entity.getEmail(),password); 
+		UserPrincipal userPrincipal = (UserPrincipal) userService.loadUserByUsername(entity.getEmail()); 
+		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
+	
+		return new ResponseEntity<UserEntity>(entity,jwtHeader, HttpStatus.CREATED);
 	}
 	
 	

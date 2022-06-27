@@ -67,8 +67,8 @@ public class UserEntity extends AbstractEntity{
 	
 	@Column(nullable = false)
 	@NotBlank(message = "Password Cannot be Empty")
-	@Size(min = 2, max = 30, message = "Passowrd must be 2-6 length long")
-	@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$", message = "Invalid Password")
+	@Size(min = 2, max = 200, message = "Passowrd must be 2-30 length long")
+	//@Pattern(regexp = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$", message = "Invalid Password")
 	@JsonIgnore
 	private String password;
 

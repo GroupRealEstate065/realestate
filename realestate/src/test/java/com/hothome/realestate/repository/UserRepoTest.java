@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
@@ -34,8 +35,10 @@ public class UserRepoTest {
 	@Autowired
 	private UserRepository userRepo;
 	
+	@Autowired
+	private BCryptPasswordEncoder encoder;
 	
-	//@Test
+	@Test
 	public void testCreateUser() {
 		UserEntity entity = new UserEntity();
 		
@@ -43,7 +46,8 @@ public class UserRepoTest {
 		entity.setLastName("Singh");
 		entity.setAuthorities(ADMIN_AUTHORITIES);
 		entity.setRole(ROLE_ADMIN);
-		entity.setPassword("Aq@123456789");
+		String pssword = encoder.encode("Aq@123456789");
+		entity.setPassword(pssword);
 		entity.setActive(true);
 		entity.setNotLocked(true);
 		entity.setEmail("karanpartapsingh20@gmail.com");
