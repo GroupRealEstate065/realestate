@@ -9,6 +9,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -28,11 +30,13 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.validation.Valid;
 
 import com.hothome.Utility.AmazonS3Util;
+import com.hothome.Utility.AwsS3Constant;
 import com.hothome.configuration.UserDetailsServiceImpl;
 import com.hothome.constant.AuthenticationType;
 import com.hothome.constant.Authority;
 import com.hothome.constant.Roles;
 import com.hothome.dto.LoginDto;
+import com.hothome.dto.RegisterDto;
 import com.hothome.jwt.JwtTokenProvider;
 import com.hothome.model.UserEntity;
 import com.hothome.model.UserLogged;
@@ -47,7 +51,7 @@ public class HomeController {
     public static final String USER_DELETED_SUCCESSFULLY = "User deleted successfully";
     private AuthenticationManager authenticationManager;
     private UserDetailsServiceImpl userService;
-    private UserService userServiceD;
+    
     private JwtTokenProvider jwtTokenProvider;
 	
     @Autowired
@@ -118,39 +122,99 @@ public class HomeController {
 		return new ResponseEntity<UserEntity>(entity,jwtHeader, HttpStatus.CREATED);
 	}
 	
-	@RequestMapping(value = "/register",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public ResponseEntity<UserEntity> registerAdmin(@RequestBody  UserEntity entity, @RequestParam(required = false) MultipartFile userImage, @RequestParam(required = false) MultipartFile builderDoc){
+	@RequestMapping(value = "/register",method = RequestMethod.POST, produces = "application/json")
+	//public ResponseEntity<UserEntity> registerAdmin(@ModelAttribute UserEntity entity){
+	public ResponseEntity<UserEntity> registerAdmin(@RequestParam() String firstName,@RequestParam() String lastName,@RequestParam() String email,@RequestParam() String phoneNumber,@RequestParam() String password,@RequestParam() String street,@RequestParam() String city,@RequestParam() String postalCode,@RequestParam() String licenseNumber,@RequestParam() String role, @RequestParam(required = false) MultipartFile userImage, @RequestParam(required = false) MultipartFile builderDoc){
 		
-		if(!userImage.isEmpty()) {
-			String imageName = userImage.getOriginalFilename();
-			entity.setProfileImage(imageName);
-			String uploadDir = "user-photos/" + entity.getId();
-			try {
-				AmazonS3Util.deleteFile(uploadDir);
-				AmazonS3Util.uploadFile(uploadDir, imageName, userImage.getInputStream());
-				
-				
-				
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
+		String[] authorities = null;
+		Roles roleTemp = null;
+		if(role == "ROLE_ADMIN") {
+			roleTemp = ROLE_ADMIN;
+		}
+		else if(role == "ROLE_CUSTOMER") {
+			roleTemp = Roles.ROLE_CUSTOMER;
+		}
+		else {
+			roleTemp = Roles.ROLE_BUILDER;	
 		}
 		
-		
-		
-		
-		
-		String password = entity.getPassword();
+		if(role == Roles.ROLE_ADMIN.toString()) {
+			authorities = ADMIN_AUTHORITIES;
+		}
+		else if(role == Roles.ROLE_BUILDER.toString()) {
+			authorities = ADMIN_AUTHORITIES;	
+		}
+		else {
+			authorities = ADMIN_AUTHORITIES;
+		}
+		UserEntity entity = new UserEntity(firstName, lastName, authorities, roleTemp, true, true, email, password, AuthenticationType.Database.toString(), "", phoneNumber, street, city, postalCode, licenseNumber, "");
 		entity.setAuthenticationType(AuthenticationType.Database.toString());
-		UserEntity user = adminService.save(entity);
-	
+		if(!userImage.isEmpty()) 
+		{ 
+			 String imageName = userImage.getOriginalFilename(); 
+			 entity.setProfileImage(imageName);
+		}
+		 if(!builderDoc.isEmpty()) 
+		{ 
+			 String imageName = builderDoc.getOriginalFilename(); 
+			 entity.setLicenseDoc(imageName); 
+		}
+		UserEntity savedUser = adminService.save(entity);
+		//upload user image
+		 if(!userImage.isEmpty()) 
+		{ 
+			 String imageName = userImage.getOriginalFilename(); 
+			 //entity.setProfileImage(imageName); 
+			 String uploadDir = AwsS3Constant.USER_PHOTOS +"/" + entity.getId(); 
+			 try {
+				  AmazonS3Util.deleteFile(uploadDir); 
+				  AmazonS3Util.uploadFile(uploadDir,imageName, userImage.getInputStream());
+			 }
+			 catch (IOException e) {
+				 e.printStackTrace(); 
+			 }	 
+		 }	
+		 //upload builder docs
+		 if(!builderDoc.isEmpty()) 
+		{ 
+			 String imageName = builderDoc.getOriginalFilename(); 
+			 //entity.setLicenseDoc(imageName); 
+			 String uploadDir = AwsS3Constant.BUILDER_DOC + "/" + entity.getId(); 
+			 try {
+				  AmazonS3Util.deleteFile(uploadDir); 
+				  AmazonS3Util.uploadFile(uploadDir,imageName, userImage.getInputStream());
+			 }
+			 catch (IOException e) {
+				 e.printStackTrace(); 
+			 }	 
+		 }	
+			
+		
 		authenticate(entity.getEmail(),password); 
 		UserPrincipal userPrincipal = (UserPrincipal) userService.loadUserByUsername(entity.getEmail()); 
 		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
 	
-		return new ResponseEntity<UserEntity>(entity,jwtHeader, HttpStatus.CREATED);
+		return new ResponseEntity<UserEntity>(savedUser,jwtHeader, HttpStatus.CREATED);
+	}
+	
+	@RequestMapping(value = "/user-image/{id}",method = RequestMethod.POST, produces = "application/json")
+	public ResponseEntity<String> saveUserImage(@PathVariable(required = true) Long id ,@RequestParam(required = true) MultipartFile userImage){
+		UserEntity entity = this.adminService.findById(id);
+		 if(!userImage.isEmpty()) 
+		{ 
+			 String imageName = userImage.getOriginalFilename(); 
+			 entity.setProfileImage(imageName); 
+			 String uploadDir = "user-photos/" + entity.getId(); 
+			 try {
+				  AmazonS3Util.deleteFile(uploadDir); 
+				  AmazonS3Util.uploadFile(uploadDir,imageName, userImage.getInputStream());
+			 }
+			 catch (IOException e) {
+				 e.printStackTrace(); 
+			 }
+			 
+		 }
+		return new ResponseEntity<String>("Uploaded",HttpStatus.OK);
 	}
 	
 	
