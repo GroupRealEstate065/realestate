@@ -123,7 +123,6 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/register",method = RequestMethod.POST, produces = "application/json")
-	//public ResponseEntity<UserEntity> registerAdmin(@ModelAttribute UserEntity entity){
 	public ResponseEntity<UserEntity> registerAdmin(@RequestParam() String firstName,@RequestParam() String lastName,@RequestParam() String email,@RequestParam() String phoneNumber,@RequestParam() String password,@RequestParam() String street,@RequestParam() String city,@RequestParam() String postalCode,@RequestParam() String licenseNumber,@RequestParam() String role, @RequestParam(required = false) MultipartFile userImage, @RequestParam(required = false) MultipartFile builderDoc){
 		
 		String[] authorities = null;
