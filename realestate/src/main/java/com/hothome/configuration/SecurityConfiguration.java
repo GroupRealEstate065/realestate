@@ -61,16 +61,14 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter{
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http.csrf().disable().cors().and()
-		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+		.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.NEVER)
 		.and()
 		.authorizeRequests().antMatchers(PUBLIC_URLS).permitAll()
 		.anyRequest().authenticated()
-		.and()
-		.oauth2Login()
-			.userInfoEndpoint()
-			.userService(oAuth2UserService)
-			.and()
-			.successHandler(oauth2LoginHandler)
+				/*
+				 * .and() .oauth2Login() .userInfoEndpoint() .userService(oAuth2UserService)
+				 * .and() .successHandler(oauth2LoginHandler)
+				 */
 		.and()
 		.exceptionHandling().accessDeniedHandler(jwtAccessDeniedHandler)
 		.authenticationEntryPoint(jwtAuthenticationEntryPoint)

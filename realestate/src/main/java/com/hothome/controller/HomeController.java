@@ -5,6 +5,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -123,14 +124,18 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/register",method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<UserEntity> registerAdmin(@RequestParam() String firstName,@RequestParam() String lastName,@RequestParam() String email,@RequestParam() String phoneNumber,@RequestParam() String password,@RequestParam() String street,@RequestParam() String city,@RequestParam() String postalCode,@RequestParam() String licenseNumber,@RequestParam() String role, @RequestParam(required = false) MultipartFile userImage, @RequestParam(required = false) MultipartFile builderDoc){
+	public ResponseEntity<UserEntity> registerAdmin(@RequestParam(required = false) Long id,@RequestParam() String firstName,@RequestParam() String lastName,@RequestParam() String email,
+			@RequestParam() String phoneNumber,@RequestParam() String password,@RequestParam() String street,
+			@RequestParam() String city,@RequestParam() String postalCode,@RequestParam() String licenseNumber,
+			@RequestParam() String role, @RequestParam(required = false) MultipartFile userImage, 
+			@RequestParam(required = false) MultipartFile builderDoc){
 		
 		String[] authorities = null;
 		Roles roleTemp = null;
 		if(role == "ROLE_ADMIN") {
 			roleTemp = ROLE_ADMIN;
 		}
-		else if(role == "ROLE_CUSTOMER") {
+		else if(role == "ROLE_CUSTOMER") {	
 			roleTemp = Roles.ROLE_CUSTOMER;
 		}
 		else {
@@ -146,21 +151,28 @@ public class HomeController {
 		else {
 			authorities = ADMIN_AUTHORITIES;
 		}
-		UserEntity entity = new UserEntity(firstName, lastName, authorities, roleTemp, true, true, email, password, AuthenticationType.Database.toString(), "", phoneNumber, street, city, postalCode, licenseNumber, "");
+		UserEntity entity;
+		if(id == null) {
+			entity = new UserEntity(firstName, lastName, authorities, roleTemp, true, true, email, password, AuthenticationType.Database.toString(), "", phoneNumber, street, city, postalCode, licenseNumber, "");
+		}
+		else {
+			entity =  new UserEntity(id,firstName, lastName, authorities, roleTemp, true, true, email, password, AuthenticationType.Database.toString(), "", phoneNumber, street, city, postalCode, licenseNumber, "");
+		}
+		 
 		entity.setAuthenticationType(AuthenticationType.Database.toString());
-		if(!userImage.isEmpty()) 
+		if(userImage != null && !userImage.isEmpty()) 
 		{ 
 			 String imageName = userImage.getOriginalFilename(); 
 			 entity.setProfileImage(imageName);
 		}
-		 if(!builderDoc.isEmpty()) 
+		 if(builderDoc != null && !builderDoc.isEmpty()) 
 		{ 
 			 String imageName = builderDoc.getOriginalFilename(); 
 			 entity.setLicenseDoc(imageName); 
 		}
 		UserEntity savedUser = adminService.save(entity);
 		//upload user image
-		 if(!userImage.isEmpty()) 
+		 if(userImage != null && !userImage.isEmpty()) 
 		{ 
 			 String imageName = userImage.getOriginalFilename(); 
 			 //entity.setProfileImage(imageName); 
@@ -174,7 +186,7 @@ public class HomeController {
 			 }	 
 		 }	
 		 //upload builder docs
-		 if(!builderDoc.isEmpty()) 
+		 if(builderDoc != null && !builderDoc.isEmpty()) 
 		{ 
 			 String imageName = builderDoc.getOriginalFilename(); 
 			 //entity.setLicenseDoc(imageName); 
@@ -210,8 +222,7 @@ public class HomeController {
 			 }
 			 catch (IOException e) {
 				 e.printStackTrace(); 
-			 }
-			 
+			 } 
 		 }
 		return new ResponseEntity<String>("Uploaded",HttpStatus.OK);
 	}
@@ -236,7 +247,13 @@ public class HomeController {
         return headers;
     }
 	 private void authenticate(String username, String password) {
-	        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+		 authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));	
+		 /*
+			 * try { authenticationManager.authenticate(new
+			 * UsernamePasswordAuthenticationToken(username, password)); } catch (Exception
+			 * e) { // TODO: handle exception throw new
+			 * BadCredentialsException("Invalid Username Password"); }
+			 */
     }
 	
 }

@@ -50,5 +50,12 @@ public abstract class AbstractEntity implements Serializable{
 	@DateTimeFormat
 	@UpdateTimestamp
 	protected LocalDateTime modifiedAt;
+
+	public AbstractEntity(Long id) {
+		super();
+		this.id = id;
+	}
+	
+	
 		
 }

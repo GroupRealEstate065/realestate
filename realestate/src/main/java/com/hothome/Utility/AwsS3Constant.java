@@ -7,6 +7,7 @@ public class AwsS3Constant {
 	
 	public static final String BUILDER_DOC = "builder-doc";
 	public static final String USER_PHOTOS = "user-photos";
+	public static final String PROPERTY_PHOTOS = "property-images";
 	
 	static {
 		

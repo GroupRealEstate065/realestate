@@ -144,7 +144,7 @@ public class UserEntity extends AbstractEntity{
 
 
 
-	public UserEntity(Long id, LocalDateTime createdAt, LocalDateTime modifiedAt,
+	public UserEntity(Long id,
 			@NotBlank(message = "First Name cannot be Empty") @Size(min = 2, max = 35, message = "First Name must have length of 2-5 characters ") @Pattern(regexp = "[A-Za-z']*", message = "First Name contains illegal characters") String firstName,
 			@NotBlank(message = "Last Name cannot be Empty") @Size(min = 2, max = 25, message = "Last Name must have length of 2-5 characters ") @Pattern(regexp = "[A-Za-z']*", message = "Last Name contains illegal characters") String lastName,
 			String[] authorities, Roles role, boolean isActive, boolean isNotLocked,
@@ -157,7 +157,7 @@ public class UserEntity extends AbstractEntity{
 			@Size(min = 2, max = 25) @Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Please Enter Alphanumeric Characters") String postalCode,
 			@Size(min = 2, max = 25) @Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Please Enter Alphanumeric Characters") String licenseNumber,
 			String licenseDoc) {
-		super(id, createdAt, modifiedAt);
+		super(id);
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.authorities = authorities;
@@ -175,6 +175,7 @@ public class UserEntity extends AbstractEntity{
 		this.licenseNumber = licenseNumber;
 		this.licenseDoc = licenseDoc;
 	}
+	
 	
 	
 	

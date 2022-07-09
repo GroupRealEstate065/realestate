@@ -46,9 +46,17 @@ public class UserService{
 	
 	public UserEntity save(UserEntity user) {
 		boolean isUpdatingUser = (user.getId() != null);
-		if(false) {
+		if(isUpdatingUser) {
 			UserEntity temp = userRepository.findById(user.getId()).get();
-			
+			user.setPassword(encoder.encodePassword(user.getPassword()));
+			user.setCreatedAt(temp.getCreatedAt());
+			user.setRole(temp.getRole());
+			if(user.profileImage == "") {
+				user.setProfileImage(temp.profileImage);
+			}
+			if(user.getLicenseDoc() == "") {
+				user.setLicenseDoc(temp.getLicenseDoc());
+			}
 		}
 		else {
 			user.setPassword(encoder.encodePassword(user.getPassword()));
