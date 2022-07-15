@@ -13,6 +13,8 @@ public class HttpResponse {
     private String reason;
     private String message;
 
+    private Object entity;
+    
     // Constructor never used. Can be (and should be) deleted
     public HttpResponse() {}
 
@@ -23,8 +25,19 @@ public class HttpResponse {
         this.reason = reason;
         this.message = message;
     }
+    
+    public HttpResponse(Date timeStamp, int httpStatusCode, HttpStatus httpStatus, String reason, String message,
+			Object entity) {
+		super();
+		this.timeStamp = timeStamp;
+		this.httpStatusCode = httpStatusCode;
+		this.httpStatus = httpStatus;
+		this.reason = reason;
+		this.message = message;
+		this.entity = entity;
+	}
 
-    public Date getTimeStamp() {
+	public Date getTimeStamp() {
         return timeStamp;
     }
 
@@ -63,4 +76,14 @@ public class HttpResponse {
     public void setMessage(String message) {
         this.message = message;
     }
+
+	public Object getEntity() {
+		return entity;
+	}
+
+	public void setEntity(Object entity) {
+		this.entity = entity;
+	}
+    
+    
 }

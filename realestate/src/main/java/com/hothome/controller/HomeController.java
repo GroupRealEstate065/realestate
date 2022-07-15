@@ -230,12 +230,13 @@ public class HomeController {
 	
 	
 	@RequestMapping(value = "/login",method = RequestMethod.POST, consumes = "application/json", produces = "application/json")
-	public ResponseEntity<UserPrincipal> login(@RequestBody LoginDto loginDto){
+	public ResponseEntity<UserEntity> login(@RequestBody LoginDto loginDto){
 		
 		authenticate(loginDto.getEmail(),loginDto.getPassword());
 		UserPrincipal userPrincipal = (UserPrincipal) userService.loadUserByUsername(loginDto.getEmail());
 		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
-		return new ResponseEntity<UserPrincipal>(userPrincipal,jwtHeader, HttpStatus.CREATED);
+		UserEntity entity = this.adminService.getUserByEmail(loginDto.getEmail());
+		return new ResponseEntity<UserEntity>(entity,jwtHeader, HttpStatus.CREATED);
 	}
 	
 	

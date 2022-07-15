@@ -3,9 +3,13 @@ package com.hothome.controller;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -15,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.hothome.Utility.AmazonS3Util;
 import com.hothome.Utility.AwsS3Constant;
+import com.hothome.jwt.JwtTokenProvider;
 import com.hothome.model.PropertyEntity;
 import com.hothome.service.PropertyService;
 
@@ -24,6 +29,9 @@ public class PropertyListingController {
 
 	@Autowired
 	private PropertyService propertyService; 
+	
+	@Autowired
+	private JwtTokenProvider pro;
 	
 	@RequestMapping(method = RequestMethod.POST, value = "/save")
 	public ResponseEntity<PropertyEntity> saveProperty(@RequestParam String name, @RequestParam String roomDetails,@RequestParam String description,@RequestParam boolean parking,
@@ -63,7 +71,24 @@ public class PropertyListingController {
 	}
 	
 	@RequestMapping(value = "/findAll", method = RequestMethod.GET, produces = "application/json")
-	public ArrayList<PropertyEntity> findAll(){
+	public ArrayList<PropertyEntity> findAll(HttpServletRequest request){
+		String token= request.getHeader(HttpHeaders.AUTHORIZATION);
+		//System.err.println(this.pro.getSubject(token));
 		return this.propertyService.findAll();
 	}
+	
+	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET, produces = "application/json")
+	public ResponseEntity<PropertyEntity> findById(@PathVariable(required = true) Long id){
+		PropertyEntity entity = null;
+		try {
+			entity = this.propertyService.findById(id);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		return new ResponseEntity<PropertyEntity>(entity,HttpStatus.OK);
+	}
+	
+	
 }
