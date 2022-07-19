@@ -20,6 +20,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.hothome.Utility.AmazonS3Util;
 import com.hothome.Utility.AwsS3Constant;
 import com.hothome.jwt.JwtTokenProvider;
+import com.hothome.model.BiddingEntity;
 import com.hothome.model.PropertyEntity;
 import com.hothome.service.PropertyService;
 
@@ -82,6 +83,8 @@ public class PropertyListingController {
 		PropertyEntity entity = null;
 		try {
 			entity = this.propertyService.findById(id);
+			//ArrayList<BiddingEntity> bids = (ArrayList<BiddingEntity>) entity.getBids();
+			System.err.println(entity.getBids().size());
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

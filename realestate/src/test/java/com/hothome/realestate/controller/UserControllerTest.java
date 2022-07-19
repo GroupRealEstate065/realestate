@@ -160,6 +160,6 @@ public class UserControllerTest {
                 //.andExpect(MockMvcResultMatchers.content().string(containsString("karanpartapsingh20@gmail.com")))
                 .andDo(document("user/check-user-email-unique"))
                 .andDo(print());
-                		}
+	}
 
 }

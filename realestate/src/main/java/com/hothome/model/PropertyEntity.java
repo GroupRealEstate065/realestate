@@ -2,12 +2,19 @@ package com.hothome.model;
 
 import static com.hothome.Utility.AwsS3Constant.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,12 +42,20 @@ public class PropertyEntity extends AbstractEntity{
 	private String postalCode;
 	private String[] imagesUrl;
 	
-	@OneToMany(fetch = FetchType.LAZY)
-	private List<BiddingEntity> bids;
+	@JsonManagedReference
+	@OneToMany(mappedBy = "property", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+	private List<BiddingEntity> bids = new ArrayList<BiddingEntity>();
 	
 	
+	  @OneToOne(fetch = FetchType.EAGER)
+	  private BiddingEntity customerFinalBid;
+	  
+	  @OneToOne(fetch = FetchType.EAGER)
+	  private BiddingEntity builderFinalBid;
+	  
+	 
 	@Transient
-	public String[] getImagesUrl() {
+	public String[] getImagesUrl() { 
 		//return S3_BASE_URI + "/user-photos/" + this.id + "/" + this.profileImage;
 		for(int i = 0; i < imagesUrl.length; i++) {
 			this.imagesUrl[i] =  S3_BASE_URI + "/" + PROPERTY_PHOTOS  + "/" + this.id + "/" + this.imagesUrl[i];
@@ -49,6 +64,10 @@ public class PropertyEntity extends AbstractEntity{
 	}
 
 
+	public void addBid(BiddingEntity entity) {
+		this.bids.add(entity);
+	}
+	
 	public PropertyEntity( String name, String roomDetails, String description, boolean parking,
 			String livingArea, String bathroomDetails, String builderPrice, String customerPrice, String propertyType,
 			String street, String city, String postalCode, String[] imagesUrl) {

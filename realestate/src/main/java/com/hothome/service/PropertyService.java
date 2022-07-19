@@ -32,6 +32,7 @@ public class PropertyService {
 			throw new Exception("NOt Found");
 		}
 		else {
+			
 			return entity.get();
 		}
 		
