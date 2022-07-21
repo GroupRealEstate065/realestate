@@ -38,7 +38,7 @@ public class UserRepoTest {
 	@Autowired
 	private BCryptPasswordEncoder encoder;
 	
-	@Test
+	//@Test
 	public void testCreateUser() {
 		UserEntity entity = new UserEntity();
 		
@@ -85,7 +85,7 @@ public class UserRepoTest {
 		assertThat(userRepo.save(entity).getId() > 0);
 	}
 
-	//@Test
+	@Test
 	public void testListAllUser() {
 		Iterable<UserEntity> temp = userRepo.findAll();
 		temp.forEach(user ->{System.err.println(user);});

@@ -64,4 +64,5 @@ public class BiddingService {
 		return this.propertyService.save(propEntity);
 	}
 	
+	
 }

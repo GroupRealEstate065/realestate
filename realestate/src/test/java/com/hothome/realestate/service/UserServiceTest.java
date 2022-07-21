@@ -1,6 +1,12 @@
 package com.hothome.realestate.service;
 
+import static com.hothome.constant.AuthenticationType.Database;
+import static com.hothome.constant.Authority.ADMIN_AUTHORITIES;
+import static com.hothome.constant.Roles.ROLE_ADMIN;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.ArrayList;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -44,4 +50,35 @@ public class UserServiceTest {
 		
 		assertEquals("Duplicated", reponse);
 	}
+	
+	@Test
+	public void testListAllUser() {
+		ArrayList<UserEntity> list = (ArrayList<UserEntity>) this.userRepository.findAll();
+		
+		Mockito.when(userRepository.findAll()).thenReturn(list);
+		
+		ArrayList<UserEntity> serviceList = this.userService.listAll();
+		
+		assertEquals(list, serviceList);
+	}
+	@Test
+	public void testfindById() {
+		UserEntity entity = new UserEntity();
+		entity.setFirstName("Karanpartap");
+		entity.setRole(ROLE_ADMIN);
+		entity.setEmail("karanpartapsingh20@gmail.com");
+		
+		Optional<UserEntity> entity1 = Optional.of(entity);
+		
+		Mockito.when(this.userRepository.findById(3L)).thenReturn(entity1);
+		
+		UserEntity user = this.userService.findById(3L);
+		
+		assertEquals(user.getFirstName(), entity.getFirstName());
+		assertEquals(user.getRole(), entity.getRole());
+		assertEquals(user.getEmail(), entity.getEmail());	
+	}
+	
+	
+	
 }

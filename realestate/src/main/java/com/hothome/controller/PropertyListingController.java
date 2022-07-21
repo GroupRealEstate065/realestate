@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,6 +35,7 @@ public class PropertyListingController {
 	@Autowired
 	private JwtTokenProvider pro;
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/save")
 	public ResponseEntity<PropertyEntity> saveProperty(@RequestParam String name, @RequestParam String roomDetails,@RequestParam String description,@RequestParam boolean parking,
 			@RequestParam String livingArea, @RequestParam String bathroomDetails, @RequestParam String builderPrice, @RequestParam String customerPrice,
@@ -71,22 +73,20 @@ public class PropertyListingController {
 		return new ResponseEntity<PropertyEntity>(savedProperty,HttpStatus.CREATED);
 	}
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or hasAnyAuthority('ROLE_CUSTOMER') or hasAnyAuthority('ROLE_BUILDER')")
 	@RequestMapping(value = "/findAll", method = RequestMethod.GET, produces = "application/json")
 	public ArrayList<PropertyEntity> findAll(HttpServletRequest request){
-		String token= request.getHeader(HttpHeaders.AUTHORIZATION);
-		//System.err.println(this.pro.getSubject(token));
 		return this.propertyService.findAll();
 	}
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or hasAnyAuthority('ROLE_CUSTOMER') or hasAnyAuthority('ROLE_BUILDER')")
 	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET, produces = "application/json")
 	public ResponseEntity<PropertyEntity> findById(@PathVariable(required = true) Long id){
 		PropertyEntity entity = null;
 		try {
 			entity = this.propertyService.findById(id);
-			//ArrayList<BiddingEntity> bids = (ArrayList<BiddingEntity>) entity.getBids();
 			System.err.println(entity.getBids().size());
 		} catch (Exception e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
