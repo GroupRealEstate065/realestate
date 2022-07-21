@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,21 +25,18 @@ public class BiddingController {
 	@Autowired
 	private BiddingService biddingService;
 	
+	@PreAuthorize("hasAnyAuthority('ROLE_CUSTOMER') or hasAnyAuthority('ROLE_BUILDER')")
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
-	public ResponseEntity<HttpResponse> save(@RequestParam String price, @RequestParam Long propertyId, @RequestParam Long userId){
-		BiddingEntity entity = null;
+	public ResponseEntity<BiddingEntity> save(@RequestParam Double price, @RequestParam Long propertyId, @RequestParam Long userId) throws Exception{
 		try {
-			Double bidPrice = Double.valueOf(price);
-			entity = this.biddingService.save(bidPrice, propertyId, userId);
-			Object temp = entity;
-			HttpResponse response = new HttpResponse(HttpStatus.OK.value(), HttpStatus.OK, "Saved ENtity", "Sccessfully");
-			response.setEntity(entity);
-			return new ResponseEntity<HttpResponse>(response,HttpStatus.OK);
+			BiddingEntity entity = this.biddingService.save(price, propertyId, userId);
+			return new ResponseEntity<BiddingEntity>(entity,HttpStatus.OK);
 		} catch (Exception e) {
-			HttpResponse response = new HttpResponse(HttpStatus.BAD_REQUEST.value(), HttpStatus.BAD_REQUEST, "Erorr Occured", "Sccessfully");
-			return new ResponseEntity<HttpResponse>(response,HttpStatus.BAD_REQUEST);
+			throw new Exception("Error in save bid");
 		}
 	}
+	
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 	@RequestMapping(value = "/finalBid", method = RequestMethod.POST)
 	public ResponseEntity<HttpResponse> saveFinalBid(@RequestParam Long bidId, @RequestParam Long propertyId, @RequestParam Long userId, @RequestParam String type){
 		PropertyEntity entity = null;
@@ -53,6 +51,7 @@ public class BiddingController {
 			return new ResponseEntity<HttpResponse>(response,HttpStatus.BAD_REQUEST);
 		}
 	}
+	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or hasAnyAuthority('ROLE_CUSTOMER') or hasAnyAuthority('ROLE_BUILDER')")
 	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET)
 	public ResponseEntity<BiddingEntity> findById(@PathVariable Long id){
 		BiddingEntity entity = null;

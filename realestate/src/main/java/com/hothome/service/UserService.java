@@ -1,6 +1,7 @@
 package com.hothome.service;
 
 import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -90,6 +91,19 @@ public class UserService{
 		customer.setPassword("");
 		return userRepository.save(customer);
 	}	
+	@Transactional(value = TxType.REQUIRES_NEW)
+	public ArrayList<UserEntity> updateActiveStatus(Long id){
+		UserEntity entity = this.findById(id);
+		boolean status = false;
+		if(entity.isActive()) {
+			entity.setActive(false);
+		}
+		else {
+			entity.setActive(true);	
+		}
+		this.save(entity);
+		return this.listAll();
+	}
 	
 	public String checkEmailUnique(String email) {
 		UserEntity user = userRepository.getUserEntityByEmail(email);
@@ -99,7 +113,6 @@ public class UserService{
 		else {
 			return "Duplicated";
 		}
-		
 	}
 	
 }

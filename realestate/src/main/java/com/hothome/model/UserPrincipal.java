@@ -1,11 +1,14 @@
 package com.hothome.model;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import static java.util.Arrays.stream;
+
+import java.util.ArrayList;
 
 public class UserPrincipal implements UserDetails{
 
@@ -18,7 +21,10 @@ public class UserPrincipal implements UserDetails{
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		// TODO Auto-generated method stub
-		return stream(this.user.getAuthorities()).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+		//return stream(this.user.getAuthorities()).map(SimpleGrantedAuthority::new).collect(Collectors.toList());
+		List<SimpleGrantedAuthority> authories = new ArrayList<>();
+		authories.add(new SimpleGrantedAuthority(this.user.getRole()));
+		return authories;
 	}
 
 	@Override

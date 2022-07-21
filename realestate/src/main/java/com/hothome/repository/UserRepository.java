@@ -17,4 +17,9 @@ public interface UserRepository extends PagingAndSortingRepository<UserEntity, L
 	@Query("UPDATE UserEntity u SET u.authenticationType =?2 WHERE u.id = ?1")
 	public void updateAuthenticationType(Long userId,String type);
 	
+	@Modifying
+	@Query("UPDATE UserEntity u SET u.isActive =?2 WHERE u.id = ?1")
+	public void updateActiveStatus(Long userId,boolean status);
+	
+	
 }

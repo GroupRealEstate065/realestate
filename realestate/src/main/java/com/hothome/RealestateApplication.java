@@ -8,7 +8,6 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 @SpringBootApplication
 @EntityScan(basePackages = {"com.hothome.model"})
 public class RealestateApplication {
-
 	public static void main(String[] args) {
 		SpringApplication.run(RealestateApplication.class, args);
 	}
