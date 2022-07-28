@@ -9,6 +9,7 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.authentication.UserServiceBeanDefinitionParser;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +39,7 @@ import com.hothome.constant.Authority;
 import com.hothome.constant.Roles;
 import com.hothome.dto.LoginDto;
 import com.hothome.dto.RegisterDto;
+import com.hothome.exception.user.UserNotFoundException;
 import com.hothome.jwt.JwtTokenProvider;
 import com.hothome.model.UserEntity;
 import com.hothome.model.UserLogged;
@@ -76,51 +78,13 @@ public class HomeController {
 	}
 	
 	
-	@RequestMapping(value = "/registerr",method = RequestMethod.GET,  produces = "application/json")
-	public ResponseEntity<UserEntity> registerAdminNew(){
-		
-	UserEntity entity = new UserEntity();
-		
-	/*
-	 * entity.setFirstName("Karanpartap"); entity.setLastName("Singh");
-	 * entity.setAuthorities(ADMIN_AUTHORITIES); entity.setRole(ROLE_ADMIN);
-	 * //String pssword = encoder.encode("Aq@123456789");
-	 * entity.setPassword("Aq@123456789"); entity.setActive(true);
-	 * entity.setNotLocked(true); entity.setEmail("karanpartapsingh20@gmail.com");
-	 * entity.setPhoneNumber("14168457419");
-	 * entity.setAuthenticationType(Database.toString());
-	 * entity.setRole(ROLE_ADMIN); entity.setStreet("Oaklea Blvd");
-	 * entity.setPostalCode("L6Y5A2"); entity.setCity("Brampton");
-	 * entity.setLicenseDoc("1233APO1"); entity.setLicenseNumber("1233APO1");
-	 */
-		
-	entity.setFirstName("John");
-	entity.setLastName("Smith");
-	entity.setAuthorities(Authority.USER_AUTHORITIES);
-	entity.setRole(Roles.ROLE_CUSTOMER);
-	entity.setPassword("Aq@123456789");
-	entity.setActive(true);
-	entity.setNotLocked(true);
-	entity.setEmail("johnsmith@gmail.com");
-	entity.setPhoneNumber("14168457419");
-	entity.setAuthenticationType(Database.toString());
-	entity.setRole(ROLE_ADMIN);
-	entity.setStreet("Lennon Drive");
-	entity.setPostalCode("LUIOO2");
-	entity.setCity("MIssissauga");
-	entity.setLicenseDoc("12336APII");
-	entity.setLicenseNumber("12336APII");
+	@RequestMapping(value = "/registerUser",method = RequestMethod.POST,  produces = "application/json")
+	public ResponseEntity<UserEntity> registerAdminNew(@RequestBody @Validated UserEntity entity){
 	
 		String password = entity.getPassword();
 		entity.setAuthenticationType(AuthenticationType.Database.toString());
 		UserEntity user = adminService.save(entity);
-		
-		  authenticate(entity.getEmail(),password); 
-		  UserPrincipal userPrincipal =
-		  (UserPrincipal) userService.loadUserByUsername(entity.getEmail()); HttpHeaders
-		  jwtHeader = getJwtHeader(userPrincipal);
-		
-		return new ResponseEntity<UserEntity>(entity,jwtHeader, HttpStatus.CREATED);
+		return new ResponseEntity<UserEntity>(entity, HttpStatus.CREATED);
 	}
 	
 	@RequestMapping(value = "/register",method = RequestMethod.POST, produces = "application/json")
@@ -209,7 +173,7 @@ public class HomeController {
 	}
 	
 	@RequestMapping(value = "/user-image/{id}",method = RequestMethod.POST, produces = "application/json")
-	public ResponseEntity<String> saveUserImage(@PathVariable(required = true) Long id ,@RequestParam(required = true) MultipartFile userImage){
+	public ResponseEntity<String> saveUserImage(@PathVariable(required = true) Long id ,@RequestParam(required = true) MultipartFile userImage) throws UserNotFoundException{
 		UserEntity entity = this.adminService.findById(id);
 		 if(!userImage.isEmpty()) 
 		{ 

@@ -2,6 +2,9 @@ package com.hothome.realestate.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import java.util.List;
+import java.util.Optional;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -27,7 +30,7 @@ import static com.hothome.constant.AuthenticationType.*;
 
 
 @DataJpaTest(showSql = true)
-@Rollback(value = false)
+@Rollback(value = true)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
 
 public class UserRepoTest {
@@ -35,7 +38,7 @@ public class UserRepoTest {
 	@Autowired
 	private UserRepository userRepo;
 	
-	@Autowired
+	//@Autowired
 	private BCryptPasswordEncoder encoder;
 	
 	//@Test
@@ -62,18 +65,18 @@ public class UserRepoTest {
 		assertThat(userRepo.save(entity).getId() > 0);
 	}
 
-	//@Test
+	@Test
 	public void testCreateUser2() {
 		UserEntity entity = new UserEntity();
 		
-		entity.setFirstName("Gagandeep");
+		entity.setFirstName("User");
 		entity.setLastName("Singh");
 		entity.setAuthorities(ADMIN_AUTHORITIES);
 		entity.setRole(ROLE_ADMIN);
 		entity.setPassword("Aq@123456789");
 		entity.setActive(true);
 		entity.setNotLocked(true);
-		entity.setEmail("gagandeepsingh20@gmail.com");
+		entity.setEmail("gagandeeaapsingh20@gmail.com");
 		entity.setPhoneNumber("14168457419");
 		entity.setAuthenticationType(Database.toString());
 		entity.setRole(ROLE_ADMIN);
@@ -87,8 +90,14 @@ public class UserRepoTest {
 
 	@Test
 	public void testListAllUser() {
-		Iterable<UserEntity> temp = userRepo.findAll();
-		temp.forEach(user ->{System.err.println(user);});
+		List<UserEntity> temp = (List<UserEntity>) userRepo.findAll();
+		assertThat(temp.size() > 0);
+	}
+	
+	@Test
+	public void testFindById() {
+		Optional<UserEntity> user = this.userRepo.findById(1L);
+		assertThat(user.get() != null);
 	}
 	
 	

@@ -80,9 +80,6 @@ include::{snippets}/user/list-all-user/http-response.adoc[]
 ==== Sample Body
 include::{snippets}/user/list-all-user/response-body.adoc[]
 
-==== Curl Sample
-include::{snippets}/user/list-all-user/curl-request.adoc[]
-
 === find User Id
 Find User by Id.
 
@@ -112,3 +109,21 @@ include::{snippets}/user/check-user-email-unique/http-response.adoc[]
 
 ==== Sample Body
 include::{snippets}/user/check-user-email-unique/response-body.adoc[]
+
+=== find User Id
+Find User by Id.
+
+==== Sample Request
+include::{snippets}/bid/get-user-by-id/http-request.adoc[]
+
+==== Sample Response
+include::{snippets}/bid/get-user-by-id/http-response.adoc[]
+
+==== Sample Body
+include::{snippets}/bid/get-user-by-id/response-body.adoc[]
+
+==== Response Fields 
+include::{snippets}/bid/get-user-by-id/response-fields.adoc[]
+
+==== Path Parameters 
+include::{snippets}/bid/get-user-by-id/path-parameters.adoc[]

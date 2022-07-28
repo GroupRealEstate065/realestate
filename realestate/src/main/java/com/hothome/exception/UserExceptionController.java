@@ -4,12 +4,17 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
 import org.springframework.security.authentication.LockedException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import com.auth0.jwt.exceptions.TokenExpiredException;
+import com.hothome.controller.HomeController;
+import com.hothome.controller.UserController;
 import com.hothome.exception.user.EmailNotFoundException;
 import com.hothome.exception.user.NotAnImageFileException;
 import com.hothome.exception.user.UserNotFoundException;
@@ -26,10 +31,12 @@ import org.springframework.http.ResponseEntity;
 
 import javax.persistence.NoResultException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
-@ControllerAdvice
-public class ExceptionController implements ErrorController{
+@ControllerAdvice(assignableTypes = {HomeController.class,UserController.class})
+public class UserExceptionController implements ErrorController{
 	
 	private static final String ACCOUNT_LOCKED = "Your account has been locked. Please contact administration";
     private static final String METHOD_IS_NOT_ALLOWED = "This request method is not allowed on this endpoint. Please send a '%s' request";
@@ -121,6 +128,19 @@ public class ExceptionController implements ErrorController{
         return createHttpResponse(NOT_FOUND, "There is no mapping for this URL");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public Map<String, String> handleValidationExceptions(
+	  MethodArgumentNotValidException ex) {
+	    Map<String, String> errors = new HashMap<>();
+	    ex.getBindingResult().getAllErrors().forEach((error) -> {
+	        String fieldName = ((FieldError) error).getField();
+	        String errorMessage = error.getDefaultMessage();
+	        errors.put(fieldName, errorMessage);
+	    });
+	    return errors;
+	}
+    
     @Override
     public String getErrorPath() {
         return ERROR_PATH;

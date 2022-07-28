@@ -37,14 +37,14 @@ public class PropertyListingController {
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 	@RequestMapping(method = RequestMethod.POST, value = "/save")
-	public ResponseEntity<PropertyEntity> saveProperty(@RequestParam String name, @RequestParam String roomDetails,@RequestParam String description,@RequestParam boolean parking,
+	public ResponseEntity<String> saveProperty(@RequestParam String name, @RequestParam String roomDetails,@RequestParam String description,@RequestParam boolean parking,
 			@RequestParam String livingArea, @RequestParam String bathroomDetails, @RequestParam String builderPrice, @RequestParam String customerPrice,
 			@RequestParam String propertyType, @RequestParam String street, @RequestParam String city, @RequestParam String postalCode,
 			@RequestParam(required = false) MultipartFile[] files) 
 	{
 		String[] filesNameArray;
 		PropertyEntity entity;
-		if(files.length > 0) {
+		if(files != null && files.length > 0) {
 			filesNameArray = new String[files.length];
 			for(int i = 0; i <files.length; i++) {
 				filesNameArray[i] = files[i].getOriginalFilename();
@@ -56,7 +56,7 @@ public class PropertyListingController {
 		}
 		
 		PropertyEntity savedProperty = this.propertyService.save(entity);
-		if(files.length > 0) {
+		if(files != null && files.length > 0) {
 			for(int i = 0; i < files.length; i++) {
 				String imageName = files[i].getOriginalFilename(); 
 				  
@@ -70,13 +70,13 @@ public class PropertyListingController {
 			}
 			
 		}
-		return new ResponseEntity<PropertyEntity>(savedProperty,HttpStatus.CREATED);
+		return new ResponseEntity<String>("A",HttpStatus.CREATED);
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or hasAnyAuthority('ROLE_CUSTOMER') or hasAnyAuthority('ROLE_BUILDER')")
 	@RequestMapping(value = "/findAll", method = RequestMethod.GET, produces = "application/json")
-	public ArrayList<PropertyEntity> findAll(HttpServletRequest request){
-		return this.propertyService.findAll();
+	public ResponseEntity<ArrayList<PropertyEntity>> findAll(HttpServletRequest request){
+		return new ResponseEntity<ArrayList<PropertyEntity>>(this.propertyService.findAll(),HttpStatus.OK);
 	}
 	
 	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN') or hasAnyAuthority('ROLE_CUSTOMER') or hasAnyAuthority('ROLE_BUILDER')")

@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 import com.hothome.Utility.PasswordEncoder;
 import com.hothome.constant.AuthenticationType;
 import com.hothome.constant.Roles;
+import com.hothome.exception.user.UserNotFoundException;
 import com.hothome.model.UserEntity;
 import com.hothome.repository.UserRepository;
+import com.supportportal.exception.domain.EmailExistException;
 
 import static com.hothome.constant.Authority.*;
 
@@ -27,6 +29,9 @@ public class UserService{
 	private UserRepository userRepository;
 	
 	@Autowired
+	private BiddingService biddingService;
+	
+	@Autowired
 	private PasswordEncoder encoder;
 	
 	public UserEntity getUserByEmail(String email) {
@@ -37,10 +42,11 @@ public class UserService{
 		ArrayList<UserEntity> temp = (ArrayList<UserEntity>) userRepository.findAll();
 		return temp;
 	}
-	public UserEntity findById(Long id) {
+	public UserEntity findById(Long id) throws UserNotFoundException
+	{
 		Optional<UserEntity>  user = this.userRepository.findById(id);
 		if(user == null) {
-			throw new UsernameNotFoundException("User does not Exist");
+			throw new UserNotFoundException("User does not Exist with given ID:" + id);
 		}
 		return user.get();
 	}
@@ -65,14 +71,14 @@ public class UserService{
 		return userRepository.save(user);	
 	}
 	
-	public boolean deleteById(Long id) {
+	public boolean deleteById(Long id) throws UserNotFoundException{
 		Optional<UserEntity> user = this.userRepository.findById(id);
 		if(user != null) {
 			this.userRepository.delete(user.get());
 			return true;
 		}
 		else {
-			throw new UsernameNotFoundException("User does not Exist");
+			throw new UserNotFoundException("User does not Exist with given ID:" + id);
 		}
 	}
 	public void updateAuthenticationType(Long userId,String authenticationType) {
@@ -92,7 +98,7 @@ public class UserService{
 		return userRepository.save(customer);
 	}	
 	@Transactional(value = TxType.REQUIRES_NEW)
-	public ArrayList<UserEntity> updateActiveStatus(Long id){
+	public ArrayList<UserEntity> updateActiveStatus(Long id) throws UserNotFoundException{
 		UserEntity entity = this.findById(id);
 		boolean status = false;
 		if(entity.isActive()) {
@@ -105,7 +111,9 @@ public class UserService{
 		return this.listAll();
 	}
 	
-	public String checkEmailUnique(String email) {
+	
+	
+	public String checkEmailUnique(String email) throws EmailExistException{
 		UserEntity user = userRepository.getUserEntityByEmail(email);
 		if(user == null) {
 			return "OK";
@@ -114,5 +122,4 @@ public class UserService{
 			return "Duplicated";
 		}
 	}
-	
 }

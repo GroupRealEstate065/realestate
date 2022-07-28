@@ -64,12 +64,13 @@ import static org.springframework.restdocs.request.RequestDocumentation.pathPara
 import com.hothome.controller.*;
 
 @ExtendWith({RestDocumentationExtension.class,SpringExtension.class})
+//@RunWith(SpringRunner.class)
 @SpringBootTest(classes = RealestateApplication.class)
-@AutoConfigureRestDocs(outputDir = "target/generated-snippets")
-public class BiddingControllerTest {
+@AutoConfigureRestDocs(outputDir = "target/generated-snippets/bid")
+public class BiddingControllerDocTest {
 
 	
-	   MockMvc mockMvc;
+	   	MockMvc mockMvc;
 
 		@Autowired
 		WebApplicationContext context;
@@ -96,7 +97,7 @@ public class BiddingControllerTest {
 	    }
 	    @Test
 	    public void getBidById() throws Exception{
-	        this.mockMvc.perform(RestDocumentationRequestBuilders.get("/bid/findById/{id}",1 ))
+	        this.mockMvc.perform(RestDocumentationRequestBuilders.get("/bid/findById/{id}",3 ))
 	                .andExpect(status().isOk())
 	                .andExpect(MockMvcResultMatchers.content().string(containsString("1")))
 	                .andDo(document("bidding/get-bid-by-id",pathParameters(parameterWithName("id")

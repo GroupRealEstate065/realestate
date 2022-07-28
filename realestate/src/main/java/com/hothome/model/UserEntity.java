@@ -82,19 +82,23 @@ public class UserEntity extends AbstractEntity{
 	//@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
 	public String profileImage;
 	
-	@Size(min = 6, max = 15)
+	@NotBlank(message = "Phone Number Cannot Be Empty")
+	@Size(min = 6, max = 15,message = "Phone Number Cannot Be Empty")
 	@Pattern(regexp = "^[a-zA-Z0-9]+$", message = "Please Enter Alphanumeric Characters")
 	private String phoneNumber;
 	
-	@Size(min = 4, max = 25)
+	@NotBlank(message = "Street Cannot Be Empty")
+	@Size(min = 4, max = 25,message = "Street Cannot Be Empty")
 	@Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Please Enter Alphanumeric Characters")
 	private String street;
 	
-	@Size(min = 2, max = 25)
+	@NotBlank(message = "City Cannot Be Empty")
+	@Size(min = 2, max = 25,message = "City Cannot Be Empty")
 	@Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Please Enter Alphanumeric Characters")
 	private String city;
 	
-	@Size(min = 2, max = 25)
+	@NotBlank(message = "Postal Code Cannot Be Empty")
+	@Size(min = 2, max = 25,message = "Postal Code Cannot Be Empty")
 	@Pattern(regexp = "^[a-zA-Z0-9\\s]+$", message = "Please Enter Alphanumeric Characters")
 	private String postalCode;
 	

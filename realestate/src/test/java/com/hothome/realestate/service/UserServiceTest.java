@@ -16,9 +16,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import com.hothome.exception.user.UserNotFoundException;
 import com.hothome.model.UserEntity;
 import com.hothome.repository.UserRepository;
 import com.hothome.service.UserService;
+import com.supportportal.exception.domain.EmailExistException;
 
 @ExtendWith(MockitoExtension.class)
 @ExtendWith(SpringExtension.class)
@@ -31,7 +33,7 @@ public class UserServiceTest {
 	
 	
 	@Test
-	public void checkUniqueEmailCase1() {
+	public void checkUniqueEmailCase1() throws EmailExistException {
 		String email = "karanpartapsingh20@gmail.com";
 		UserEntity temp = new UserEntity();
 		
@@ -41,7 +43,7 @@ public class UserServiceTest {
 		assertEquals("OK", reponse);
 	}
 	@Test
-	public void checkUniqueEmailCase2() {
+	public void checkUniqueEmailCase2() throws EmailExistException {
 		String email = "karanpartapsingh20@gmail.com";
 		UserEntity temp = new UserEntity();
 		
@@ -62,7 +64,7 @@ public class UserServiceTest {
 		assertEquals(list, serviceList);
 	}
 	@Test
-	public void testfindById() {
+	public void testfindById() throws UserNotFoundException {
 		UserEntity entity = new UserEntity();
 		entity.setFirstName("Karanpartap");
 		entity.setRole(ROLE_ADMIN);

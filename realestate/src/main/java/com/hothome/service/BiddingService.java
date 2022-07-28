@@ -1,5 +1,7 @@
 package com.hothome.service;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
 
 import javax.transaction.Transactional;
@@ -7,6 +9,8 @@ import javax.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.hothome.dto.LoginDto;
+import com.hothome.dto.UserProfileDto;
 import com.hothome.model.BiddingEntity;
 import com.hothome.model.PropertyEntity;
 import com.hothome.model.UserEntity;
@@ -24,8 +28,6 @@ public class BiddingService {
 
 	@Autowired
 	private UserService userService;
-	
-	
 	
 	public BiddingEntity save(Double price, Long propId, Long userId) throws Exception {
 		
@@ -56,13 +58,23 @@ public class BiddingService {
 		BiddingEntity bid = this.findById(bidId);
 		PropertyEntity propEntity = this.propertyService.findById(propertyId);
 		if(type.equalsIgnoreCase("Customer")) {
-			propEntity.setCustomerFinalBid(bid);
+			//propEntity.setCustomerFinalBid(bid);
 		}
 		else {
-			propEntity.setBuilderFinalBid(bid);
+			//propEntity.setBuilderFinalBid(bid);
 		}
+		
 		return this.propertyService.save(propEntity);
 	}
 	
-	
+	public UserProfileDto findBidsByUser(Long id) throws Exception {
+		ArrayList<BiddingEntity> bids = (ArrayList<BiddingEntity>) this.biddingRepository.findBidsByUser(id);
+		if(bids.size() > 0) {
+			UserProfileDto dto = new UserProfileDto(bids.get(0).getUser(), bids);
+			return dto;
+		}
+		else {
+			throw new Exception("Not Found");
+		}
+	}
 }

@@ -64,7 +64,7 @@ import com.hothome.controller.*;
 @ExtendWith({RestDocumentationExtension.class,SpringExtension.class})
 @SpringBootTest(classes = RealestateApplication.class)
 @AutoConfigureRestDocs(outputDir = "target/generated-snippets")
-public class UserControllerTest {
+public class UserControllerDocTest {
 
 	//@Autowired
     MockMvc mockMvc;
