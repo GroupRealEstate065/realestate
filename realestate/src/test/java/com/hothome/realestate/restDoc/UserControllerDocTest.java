@@ -1,4 +1,4 @@
-package com.hothome.realestate.controller;
+package com.hothome.realestate.restDoc;
 
 import org.junit.Before;
 import org.junit.Rule;

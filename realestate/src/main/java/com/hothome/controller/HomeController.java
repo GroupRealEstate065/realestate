@@ -90,7 +90,7 @@ public class HomeController {
 	@RequestMapping(value = "/register",method = RequestMethod.POST, produces = "application/json")
 	public ResponseEntity<UserEntity> registerAdmin(@RequestParam(required = false) Long id,@RequestParam() String firstName,@RequestParam() String lastName,@RequestParam() String email,
 			@RequestParam() String phoneNumber,@RequestParam() String password,@RequestParam() String street,
-			@RequestParam() String city,@RequestParam() String postalCode,@RequestParam() String licenseNumber,
+			@RequestParam() String city,@RequestParam() String postalCode,@RequestParam(required = false) String licenseNumber,
 			@RequestParam() String role, @RequestParam(required = false) MultipartFile userImage, 
 			@RequestParam(required = false) MultipartFile builderDoc){
 		
@@ -200,7 +200,7 @@ public class HomeController {
 		UserPrincipal userPrincipal = (UserPrincipal) userService.loadUserByUsername(loginDto.getEmail());
 		HttpHeaders jwtHeader = getJwtHeader(userPrincipal);
 		UserEntity entity = this.adminService.getUserByEmail(loginDto.getEmail());
-		return new ResponseEntity<UserEntity>(entity,jwtHeader, HttpStatus.CREATED);
+		return new ResponseEntity<UserEntity>(entity,jwtHeader, HttpStatus.OK);
 	}
 	
 	

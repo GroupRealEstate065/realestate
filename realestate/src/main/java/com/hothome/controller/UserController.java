@@ -37,38 +37,34 @@ public class UserController {
 		return new ResponseEntity<String>("Admin",HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+	//@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 	@RequestMapping(value = "/findById/{id}", method = RequestMethod.GET,produces = "application/json")
 	public ResponseEntity<UserEntity> findById(@PathVariable(name = "id", required = true) Long id) throws UsernameNotFoundException, UserNotFoundException{
 		UserEntity user = this.userService.findById(id);
 		return new ResponseEntity<UserEntity>(user,HttpStatus.OK);
 	}
-	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+	//@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 	@RequestMapping(value = "/deleteById/{id}", method = RequestMethod.GET,produces = "application/json")
 	public ResponseEntity<Boolean> deleteById(@PathVariable(name = "id", required = true) Long id) throws UsernameNotFoundException, UserNotFoundException{
 		boolean status = this.userService.deleteById(id);
 		return new ResponseEntity<Boolean>(status,HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+	//@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 	@RequestMapping(value = "/listAll",method = RequestMethod.GET ,produces = "application/json")
 	public ResponseEntity<ArrayList<UserEntity>> listAllUser(){
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String currentPrincipalName = authentication.getName();
-		
-		System.err.println(authentication);
 		ArrayList<UserEntity> list = this.userService.listAll();
 		return new ResponseEntity<>(list,HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+	//@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 	@RequestMapping(value = "/checkEmail", method = RequestMethod.GET,produces = "application/json")
 	public ResponseEntity<String> checkEmailUnique(@RequestParam(name = "email", required = true) String email) throws UsernameNotFoundException, EmailExistException{
 		String response = this.userService.checkEmailUnique(email);
 		return new ResponseEntity<String>(response,HttpStatus.OK);
 	}
 	
-	@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
+	//@PreAuthorize("hasAnyAuthority('ROLE_ADMIN')")
 	@RequestMapping(value = "/updateStatus", method = RequestMethod.POST,produces = "application/json")
 	public ResponseEntity<ArrayList<UserEntity>> updateActiveStatus(@RequestParam(name = "id", required = true) Long id) throws UsernameNotFoundException, UserNotFoundException{
 		ArrayList<UserEntity> list = this.userService.updateActiveStatus(id);
